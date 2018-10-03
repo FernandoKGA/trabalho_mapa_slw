@@ -1,0 +1,1 @@
+transferindo arquivos com pscp no windows:  pscp -v -4 -i C:\caminh\ate\a\chave\g5.ppk C:\caminho\do\arquivo\index.php g5@g5.each3.tk:/home/g5/web/html/

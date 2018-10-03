@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Grupo algo</title>
+    <title>Grupo 5</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height, user-scalable=yes">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
@@ -12,7 +12,7 @@
 </head>
 <body>
     <?php
-
+        // Chave da SPTrans Token: 7f96df5745202fffb684b3810dcc7078c0f4184b7af2a1834b065ac28b007aa2
     ?>
     <div class="cabeca">
         Endereço:
@@ -22,9 +22,9 @@
         <div class="grupo">
             <ul style="list-style-type:none;">
                 <li>Fernando Karchiloff Gouveia de Amorim</li>
-                <li>Elemento 2</li>
-                <li>Elemento 3</li>
-                <li>Elemento 4</li>
+                <li>Fernanda Inácio</li>
+                <li>Mara Tamiris</li>
+                <li>Lucas Ken</li>
             </ul>
         </div>
     </div>
@@ -65,6 +65,11 @@
         }
 
         function sucesso(pos){
+            /*
+                Manter comentado para não gastar a API do Mapa que possui limite.
+            */
+            
+            /*
             mapboxgl.accessToken = 'pk.eyJ1IjoiZmVybmFuZG8ta2dhIiwiYSI6ImNqbTlpcnMxbDAwMGMzcG9nNmtldWlmYWQifQ.O4LmFPbru9U4X10QHhv1kQ';
         
             var geolocate = new mapboxgl.GeolocateControl({
@@ -83,6 +88,8 @@
             map.addControl(geolocate);
             map.scrollZoom.enable({around: 'center'});
             map.trigger();
+            */
+            alert("Relaxa que o mapa funciona!");
         }
         
     </script>
