@@ -1,1 +1,35 @@
 transferindo arquivos com pscp no windows:  pscp -v -4 -i C:\caminh\ate\a\chave\g5.ppk C:\caminho\do\arquivo\index.php g5@g5.each3.tk:/home/g5/web/html/
+
+
+
+Php composer
+
+packagist http (buscar)
+
+vendor
+guzzle
+
+http://api.olhovivo.sptrans.com.br/v2.1
+
+
+
+print_r()
+cookie
+
+<?php
+require "vendor/autoload.php
+$token = 'token aqui'
+$sptrans= 
+$client = new GuzzleHttp\Client()
+$res = $client->request("POST", "sptrans/LoginAutenticar?token=$token");
+echo $res->getStatusCode(), "algo";
+
+$res = $client->request("GET","$sptrans/linha/Buscar?termosBusca=8000,
+    {"headers" => ['Cookie: $cookie']});
+
+header para cookie
+
+cookie sempre altera quando faz outra autenticação
+
+logar o usuario na sptrans e pegar o cookie para ele
+

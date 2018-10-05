@@ -42,7 +42,7 @@
         }
         var opcoes = {
             enableHighAccuracy: true,
-            timeout: 5000,
+            timeout: 10000,
             maximumAge: 0
         };
         get_location();
@@ -89,7 +89,7 @@
             map.scrollZoom.enable({around: 'center'});
             map.trigger();
             */
-            alert("Relaxa que o mapa funciona!");
+            alert("Relaxa que o mapa funciona! Removido para testes.");
         }
         
     </script>
