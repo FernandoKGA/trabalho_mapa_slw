@@ -29,7 +29,14 @@ $res = $client->request("GET","$sptrans/linha/Buscar?termosBusca=8000,
 
 header para cookie
 
-cookie sempre altera quando faz outra autenticação
+cookie sempre altera quando faz outra autenticaï¿½ï¿½o
 
 logar o usuario na sptrans e pegar o cookie para ele
 
+
+calculo da distancia de UM km dentro do mapa com base na longitude e latitude, a diferenï¿½a entre latitude maxima e minima e longitude maxima e minima
+
+
+load data local infile 'stops.txt' into table paradas; 
+load data local infile 'stops.txt' into table paradas fields terminated by ',' enclosed by '"';
+LOAD DATA LOCAL INFILE 'C:\\Users\\ferna\\trabalho_mapa_slw\\stops.txt' INTO TABLE paradas FIELDS TERMINATED BY ',' ENCLOSED BY '"';

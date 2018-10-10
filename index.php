@@ -13,6 +13,16 @@
 <body>
     <?php
         // Chave da SPTrans Token: 7f96df5745202fffb684b3810dcc7078c0f4184b7af2a1834b065ac28b007aa2
+        /**
+         *require "vendor/autoload.php
+    *$token = 'token aqui';
+    *$sptrans= 
+    *$client = new GuzzleHttp\Client();
+    *$res = $client->request("POST", "sptrans/LoginAutenticar?token=$token");
+    *echo $res->getStatusCode(), "algo";
+
+    *$res = $client->request("GET","$sptrans/linha/Buscar?termosBusca=8000,{"headers" => ['Cookie: $cookie']});
+         */
     ?>
     <div class="cabeca">
         Endereço:
@@ -28,7 +38,7 @@
             </ul>
         </div>
     </div>
-    <div id='map' style="width: auto; height: 400px;"></div>
+    <div id='map'></div>
     <script>
 
         //Pega a posicao da pessoa
