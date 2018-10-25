@@ -114,8 +114,10 @@
             var lat = pos.coords.latitude;  
             var long = pos.coords.longitude;
             
+            //Token do mapa da API MapBox
             mapboxgl.accessToken = 'pk.eyJ1IjoiZmVybmFuZG8ta2dhIiwiYSI6ImNqbTlpcnMxbDAwMGMzcG9nNmtldWlmYWQifQ.O4LmFPbru9U4X10QHhv1kQ';
         
+            //Instancializacao do controle de geolocalizacao
             var geolocate = new mapboxgl.GeolocateControl({
                 positionOptions: {
                     enableHighAccuracy: true
@@ -124,11 +126,13 @@
                 showUserLocation: true
             });
 
+            //Instancializacao do controle de navegacao
             var navegacao = new mapboxgl.NavigationControl({
                 showCompass: true,
                 showZoom: true
             });
 
+            //Instancializacao do mapa
             var map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/fernando-kga/cjmecq5bqea3l2rp07iyhzo90',
@@ -137,9 +141,10 @@
                 zoom: 13.0,
             });
 
-            map.addControl(geolocate);
-            map.addControl(navegacao, 'top-right');
-            map.scrollZoom.enable({around: 'center'});
+            map.addControl(geolocate); //Adiciona o geolocalizador
+            map.addControl(navegacao, 'top-right');  //Adiciona o botao de navegacao
+            map.scrollZoom.enable({around: 'center'});  //Adiciona o botao de scroll
+            //Carrega uma funcao que da trigger no mapa apos carregado
             map.on('load', function(){
                 geolocate.trigger();
             })

@@ -1,0 +1,10 @@
+Usu�rio: g5
+Senha: 37c965a8d6d7bec292c7b11ff315d9ea
+
+Copie a senha para o 
+"buffer de transfer�ncia" -> Ctrl+c
+
+D� o comando: mysql -u g5 -p
+E no campo de senha, use o comando: Shift+Insert
+para copiar a senha no campo e d� enter! (a senha
+n�o aparece)
