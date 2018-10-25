@@ -26,7 +26,7 @@ A transferência de arquivos entre cliente e servidor também deve ser feita por
 
     pscp -v -4 -i caminho\para\onde\a\chave\esta\chave.ppk
     caminho\arquivo\a\ser\enviado\algo.extensao
-    g5@g5.each.tk:/home/g5/web/html/
+    g5@g5.each3.tk:/home/g5/web/html/
 
 **Atenção**: Para que você transfira do servidor para a sua máquina, deve-se inverter o caminho, o endereço do arquivo no servidor deve vir primeiro e depois o caminho para onde você quer salvar na sua máquina, a primeira linha de instrução deve se manter igual, que é o comando para acesso e o local para onde está a chave.
 
