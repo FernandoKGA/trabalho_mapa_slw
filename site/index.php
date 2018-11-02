@@ -1,4 +1,25 @@
-<!DOCTYPE <!DOCTYPE html>
+<?php
+    // Chave da SPTrans Token: 7f96df5745202fffb684b3810dcc7078c0f4184b7af2a1834b065ac28b007aa2
+    session_start();
+    require "../../vendor/autoload.php";
+    $token = "7f96df5745202fffb684b3810dcc7078c0f4184b7af2a1834b065ac28b007aa2";
+    $sptrans= "http://api.olhovivo.sptrans.com.br/v2.1";
+    $client = new GuzzleHttp\Client();
+    $res = $client->request("POST", "$sptrans/Login/Autenticar?token=$token");
+    //echo $res->getStatusCode(), "<p>";
+    $cookie = $res->getHeader("Set-Cookie")[0];
+    //echo $cookie;
+    $_SESSION["cookie"] = $cookie;
+    $_SESSION["sptrans"] = $sptrans;
+    session_write_close();
+    /*$res = $client->request("GET","$sptrans/linha/Buscar?termosBusca=8000",
+        ['headers' => [
+            'Cookie' => $cookie
+           ]
+        ]);*/
+    //echo $res->getBody();
+?>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -6,60 +27,27 @@
     <title>Grupo 5</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height, user-scalable=yes">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
     <script src='modernizr-custom.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
+    <!-- Script para o jQuery --> 
+    
 </head>
 <body>
-    <?php
-        // Chave da SPTrans Token: 7f96df5745202fffb684b3810dcc7078c0f4184b7af2a1834b065ac28b007aa2
-        require "../../vendor/autoload.php";
-        /**
-        *require "vendor/autoload.php";
-    *$token = 'token aqui';
-    *$sptrans= 
-    *$client = new GuzzleHttp\Client();
-    *$res = $client->request("POST", "sptrans/LoginAutenticar?token=$token");
-    *echo $res->getStatusCode(), "<p>";
-    *$cookie =- $res->getHeader("Set-Cookie")[0];
-    * cookie soh vem pelo browser, nao se o programa dentro do servidor fizer a requisicao
-
-    *$res = $client->request("GET","$sptrans/linha/Buscar?termosBusca=8000,{"headers" => [
-        *'Cookie: $cookie'
-        *]
-        *});
-        *echo $res->getBody();
-
-        *mandar o cookie de volta para poder ser feita a consulta
-     
-        * podemos fazer também com cUrl
-        *$url = "$sptrans/LoginAutenticar?token=$token";
-        *$ch = curl_init($url);
-        *curl_setopt($ch, CURLOPT_POST,1);
-        *curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        *curl_setopt($ch, CURLOPT_HEADER, 1);
-        *curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
-        *$retorno = curl_exec($ch);
-        *preg_match_all(expressaoregular);
-        *$cookie = $matches[1][0];
-        *print_r ($cookie);  cookie foi pego nesta area
-        *curl_close($ch);
-        *
-        * Fazendo conexao agora com para GET da linha 8000
-        * 
-        *$ch = curl_init("$sptrans/Linha/Buscar?termosBusca=8000");
-        *curl_setopt($ch, CURLOPT_GET,1);
-        *curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        *curl_setopt($ch, CURLOPT_HEADER, 1);
-        *curl_setopt($ch, CURLOPT_COOKIE, $cookie);
-        *$ret = curl_exec($ch);
-        */
-    ?>
     <div class="cabeca">
         Endereço:
-        <div class = "pesquisa"><input type= "text" placeholder = "Pesquise"><input type="submit" value="OK"></div>
+        <!-- Divisao para a caixa de pesquisa -->
+        <div class = "pesquisa">
+            <!-- Usa um form para se comunicar com o servidor -->
+            <form action="/busca_bd.php">
+                <input type= "text" placeholder = "Pesquise">
+                <input type="submit" value="OK">
+            </form>
+        </div>
         <!-- Os inputs para serem sequenciais devem estar -->
-        <input type="checkbox" name="option1" value="onibus">Ônibus em movimento<input type="checkbox" name="option2" value="paradas">Paradas de ônibus
+            <input type="checkbox" name="option1" value="onibus">Ônibus em movimento
+            <input type="checkbox" name="option2" value="paradas">Paradas de ônibus
         <div class="grupo">
             <ul style="list-style-type:none;">
                 <li>Fernando Karchiloff Gouveia de Amorim</li>
@@ -69,7 +57,10 @@
             </ul>
         </div>
     </div>
-    <div id='map' style='width: 100%; height: 100%;'></div>
+    <!-- Plugin do Mapbox para geocoder -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
+    <div id='map' style='width: 100%; height: 500px;'></div>
     <script>
 
         //Pega a posicao da pessoa
@@ -87,6 +78,7 @@
             maximumAge: 0
         };
         get_location();
+        
 
         function erro(error){
             switch(error.code){
@@ -114,10 +106,8 @@
             var lat = pos.coords.latitude;  
             var long = pos.coords.longitude;
             
-            //Token do mapa da API MapBox
             mapboxgl.accessToken = 'pk.eyJ1IjoiZmVybmFuZG8ta2dhIiwiYSI6ImNqbTlpcnMxbDAwMGMzcG9nNmtldWlmYWQifQ.O4LmFPbru9U4X10QHhv1kQ';
         
-            //Instancializacao do controle de geolocalizacao
             var geolocate = new mapboxgl.GeolocateControl({
                 positionOptions: {
                     enableHighAccuracy: true
@@ -126,30 +116,102 @@
                 showUserLocation: true
             });
 
-            //Instancializacao do controle de navegacao
             var navegacao = new mapboxgl.NavigationControl({
                 showCompass: true,
                 showZoom: true
             });
 
-            //Instancializacao do mapa
+            var escala = new mapboxgl.ScaleControl({
+                maxWidth: 80,
+                unit: 'metric'
+            });
+
             var map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/fernando-kga/cjmecq5bqea3l2rp07iyhzo90',
-                //center: [-46.631,-23.554],
                 center: [long, lat],
-                zoom: 13.0,
+                zoom: 12.0
             });
 
-            map.addControl(geolocate); //Adiciona o geolocalizador
-            map.addControl(navegacao, 'top-right');  //Adiciona o botao de navegacao
-            map.scrollZoom.enable({around: 'center'});  //Adiciona o botao de scroll
-            //Carrega uma funcao que da trigger no mapa apos carregado
+            var zoom;
+            var lnglat;
+
+            map.addControl(geolocate);
+            map.addControl(navegacao, 'top-right');
+            map.scrollZoom.enable({around: 'center'});
+            map.addControl(escala);
+            // disable map rotation using right click + drag
+            map.dragRotate.disable();
+            // disable map rotation using touch rotation gesture
+            map.touchZoomRotate.disableRotation();
             map.on('load', function(){
                 geolocate.trigger();
-            })
-        }
-        
+                zoom = map.getZoom();
+                console.log(zoom);
+                lnglat = map.getBounds();
+                console.log(lnglat);
+                var lng_sw = lnglat._sw.lng;
+                var lng_ne = lnglat._ne.lng;
+                var lat_sw = lnglat._sw.lat;
+                var lat_ne = lnglat._ne.lat;
+                console.log(lng_sw);
+                console.log(lng_ne);
+                console.log(lat_sw);
+                console.log(lat_ne);
+                $.ajax({
+                    url:"busca_bd.php",
+                    method:"POST",
+                    data:{
+                        'lng_sw': lng_sw,
+                        'lat_sw': lat_sw,
+                        'lng_ne': lng_ne,
+                        'lat_ne': lat_ne
+                    },
+                    dataType:"JSON",
+                    sucess: function(data){
+                        console.log(data);
+                        console.log("Passei aqui");
+                        $.each(data, function(){
+                            $.each(this, function(k, v){
+                                console.log(v);
+                                var marker = new mapboxgl.Marker()
+                                .setLngLat([this.stop_long,this.stop_lat])
+                                .addTo(map);
+                            })
+                        })
+                    },
+                    error: function(xhr, status, error){
+                        console.log("Deu ruim");
+                        console.log(xhr);
+                        console.log(status);
+                        console.log(error);
+                    }
+                });
+                console.log("passei a requisição");
+                /*$.ajax({
+                    url:"busca_onibus.php",
+                    method:"POST",
+                    dataType:"JSON",
+                    cache: false,
+                    success:function(data){
+                        console.log(data);
+                        
+                        var marker = new mapboxgl.Marker()
+                            .setLngLat([data.vs[0].px,data.vs[0].py])
+                            .addTo(map);
+                            
+                    }
+                });*/
+            });
+            map.on('drag',function(){
+                lnglat = map.getBounds();
+                //var marker1 = new mapboxgl.Marker().setLngLat([lnglat._ne.lng,lnglat._ne.lat]).addTo(map);
+                //var marker2 = new mapboxgl.Marker().setLngLat([lnglat._sw.lng,lnglat._sw.lat]).addTo(map);
+                console.log("Plotei");
+                console.log(lnglat);
+                //aqui deve puxar os pontos existentes nas proximidades
+            });
+        } 
     </script>
 </body>
 </html>
