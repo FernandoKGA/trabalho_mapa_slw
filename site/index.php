@@ -168,17 +168,17 @@
                         'lat_ne': lat_ne
                     },
                     dataType:"JSON",
-                    sucess: function(data){
-                        console.log(data);
-                        console.log("Passei aqui");
+                    cache: false,
+                    success: function(data){
+                        console.log(data_parsed);
                         $.each(data, function(){
-                            $.each(this, function(k, v){
-                                console.log(v);
+                                console.log(data.stop_lon);
+                                console.log(data.stop_lat);
                                 var marker = new mapboxgl.Marker()
-                                .setLngLat([this.stop_long,this.stop_lat])
+                                .setLngLat([data.stop_lon,data.stop_lat])
                                 .addTo(map);
-                            })
-                        })
+                            
+                        });
                     },
                     error: function(xhr, status, error){
                         console.log("Deu ruim");
@@ -187,7 +187,9 @@
                         console.log(error);
                     }
                 });
-                console.log("passei a requisição");
+                /*$.ajax("busca_bd.php").fail(function(jqXHR, textStatus){
+                    alert("Ativou fail: "+textStatus);
+                })*/
                 /*$.ajax({
                     url:"busca_onibus.php",
                     method:"POST",
@@ -203,14 +205,18 @@
                     }
                 });*/
             });
-            map.on('drag',function(){
+            map.on('click',function(e){
+                //Preste atencao no nome da variavel
+                console.log(e.lngLat);
+                
+            });
+            /*map.on('drag',function(){
                 lnglat = map.getBounds();
                 //var marker1 = new mapboxgl.Marker().setLngLat([lnglat._ne.lng,lnglat._ne.lat]).addTo(map);
                 //var marker2 = new mapboxgl.Marker().setLngLat([lnglat._sw.lng,lnglat._sw.lat]).addTo(map);
                 console.log("Plotei");
-                console.log(lnglat);
                 //aqui deve puxar os pontos existentes nas proximidades
-            });
+            });*/
         } 
     </script>
 </body>
