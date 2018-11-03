@@ -135,8 +135,19 @@
 
             var zoom;
             var lnglat;
+            var userlocation;
 
+            //https://github.com/mapbox/mapbox-gl-js/issues/5464
             map.addControl(geolocate);
+            geolocate.on('geolocate', function(){
+                //Get the updated user location, this returns a javascript object.
+                userlocation = geolocate._lastKnownPosition;
+
+                //Your work here - Get coordinates like so
+                var lat = userlocation.coords.latitude;
+                var lng = userlocation.coords.longitude;
+            });
+
             map.addControl(navegacao, 'top-right');
             map.scrollZoom.enable({around: 'center'});
             map.addControl(escala);
@@ -148,17 +159,18 @@
                 geolocate.trigger();
                 zoom = map.getZoom();
                 console.log(zoom);
-                lnglat = map.getBounds();
-                console.log(lnglat);
-                var lng_sw = lnglat._sw.lng;
-                var lng_ne = lnglat._ne.lng;
-                var lat_sw = lnglat._sw.lat;
-                var lat_ne = lnglat._ne.lat;
-                console.log(lng_sw);
-                console.log(lng_ne);
-                console.log(lat_sw);
-                console.log(lat_ne);
-                $.ajax({
+                setTimeout(function(){
+                    lnglat = map.getBounds();
+                    console.log(lnglat);
+                    var lng_sw = lnglat._sw.lng;
+                    var lng_ne = lnglat._ne.lng;
+                    var lat_sw = lnglat._sw.lat;
+                    var lat_ne = lnglat._ne.lat;
+                    console.log(lng_sw);
+                    console.log(lng_ne);
+                    console.log(lat_sw);
+                    console.log(lat_ne);
+                    $.ajax({
                     url:"busca_bd.php",
                     method:"POST",
                     data:{
@@ -167,26 +179,33 @@
                         'lng_ne': lng_ne,
                         'lat_ne': lat_ne
                     },
-                    dataType:"JSON",
+                    //dataType é o tipo de arquivo que estamos mandando
+                    //dataType:"JSON",
                     cache: false,
+                    //contentType: 'application/json; charset=utf-8',
                     success: function(data){
-                        console.log(data_parsed);
-                        $.each(data, function(){
-                                console.log(data.stop_lon);
-                                console.log(data.stop_lat);
-                                var marker = new mapboxgl.Marker()
-                                .setLngLat([data.stop_lon,data.stop_lat])
+                        //Faz o parse do JSON.
+                        var data_json = JSON.parse(data);
+                        console.log(data_json);
+                        var i = 0;
+                        //https://stackoverflow.com/questions/33995648/cannot-use-in-operator-to-search-for-length?rq=1
+                        $.each(data_json, function(){
+                            console.log(data_json[i].stop_lon);
+                            console.log(data_json[i].stop_lat);
+                            var marker = new mapboxgl.Marker()
+                                .setLngLat([data_json[i].stop_lon,data_json[i].stop_lat])
                                 .addTo(map);
-                            
+                            i++;
                         });
                     },
-                    error: function(xhr, status, error){
+                    error: function(data, xhr, status, error){
                         console.log("Deu ruim");
+                        console.log(data);
                         console.log(xhr);
                         console.log(status);
                         console.log(error);
                     }
-                });
+                });},10000);
                 /*$.ajax("busca_bd.php").fail(function(jqXHR, textStatus){
                     alert("Ativou fail: "+textStatus);
                 })*/
@@ -208,7 +227,7 @@
             map.on('click',function(e){
                 //Preste atencao no nome da variavel
                 console.log(e.lngLat);
-                
+                console.log(geolocate.getZoom());
             });
             /*map.on('drag',function(){
                 lnglat = map.getBounds();
