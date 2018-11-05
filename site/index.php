@@ -42,14 +42,16 @@
         <div class = "pesquisa">
             <!-- Usa um form para se comunicar com o servidor -->
             <form action="/busca_bd.php">
-                <input type= "text" placeholder = "Pesquise">
-                <input type="submit" value="OK">
+                <input type= "text" placeholder = "Pesquise" disabled>
+                <input type="submit" value="OK" disabled>
             </form>
         </div>
         <!-- Os inputs para serem sequenciais devem estar -->
-        <nav id="opcoes" class="opcoes">
-            <input type="checkbox" id="onibus" value="onibus">
+        <nav id="opcoes_um" class="opcoes_um">
+            <input type="checkbox" id="onibus" value="onibus" disabled>
             <label for="onibus">Ônibus em movimento</label>
+        </nav>
+        <nav id="opcoes_dois" class="opcoes_dois">
             <input type="checkbox" name="paradas" value="paradas">
             <label for="paradas">Paradas de ônibus</label>
         </nav>
@@ -238,14 +240,14 @@
                             "type": "symbol",
                             "source": "paradas",
                             "layout": {
-                                "icon-image": "triangle-15",
+                                "icon-image": "square-15",
                                 "icon-allow-overlap": false,
                                 "visibility": "none"
-                            } 
+                            }
                         });
 
                         //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
-                        document.getElementById('opcoes').addEventListener('change',function(e){
+                        document.getElementById('opcoes_dois').addEventListener('change',function(e){
                             if(e.target.checked){
                                 console.log("Marcado.");
                             }
