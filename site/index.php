@@ -26,6 +26,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Grupo 5</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height, user-scalable=yes">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
@@ -46,10 +47,12 @@
             </form>
         </div>
         <!-- Os inputs para serem sequenciais devem estar -->
-        <div id="option1"class="opcoes">
-            <input type="checkbox" name="option1" value="onibus">Ônibus em movimento
-            <input type="checkbox" name="option2" value="paradas">Paradas de ônibus
-        </div>
+        <nav id="opcoes" class="opcoes">
+            <input type="checkbox" id="onibus" value="onibus">
+            <label for="onibus">Ônibus em movimento</label>
+            <input type="checkbox" name="paradas" value="paradas">
+            <label for="paradas">Paradas de ônibus</label>
+        </nav>
         <div class="grupo">
             <ul style="list-style-type:none;">
                 <li>Fernando Karchiloff Gouveia de Amorim</li>
@@ -80,7 +83,7 @@
             maximumAge: 0
         };
         get_location();
-        
+        var load_error;
 
         function erro(error){
             switch(error.code){
@@ -150,6 +153,37 @@
                 var lng = userlocation.coords.longitude;
             });
 
+            //https://stackoverflow.com/questions/3646914/how-do-i-check-if-file-exists-in-jquery-or-pure-javascript
+            function UrlExists(url){
+                    var http = new XMLHttpRequest();
+                    http.open('HEAD', url, false);
+                    http.send();
+                    return http.status!=404;
+            }
+            if(!UrlExists("http://localhost/trabalho_slw/geojson.json")){
+                $.ajax({
+                    url:"cria_geojson.php",
+                    method:"GET",
+                    cache: false,
+                    async: false,
+                    success: function(data){
+                        console.log("Carregado!");
+                        load_error = true;
+                    },
+                    error: function(data, xhr, status, error){
+                        console.log("Deu ruim");
+                        console.log(data);
+                        console.log(xhr);
+                        console.log(status);
+                        console.log(error);
+                        load_error = false;
+                    }
+                });
+            }
+            else{
+                load_error = true;
+            }
+            
             map.addControl(navegacao, 'top-right');
             map.scrollZoom.enable({around: 'center'});
             map.addControl(escala);
@@ -157,11 +191,76 @@
             map.dragRotate.disable();
             // disable map rotation using touch rotation gesture
             map.touchZoomRotate.disableRotation();
+
+            //Fazer funcoes assim que o mapa estiver carregando.
             map.on('load', function(){
                 geolocate.trigger();
                 zoom = map.getZoom();
                 console.log(zoom);
-                setTimeout(function(){
+                if(load_error){
+                    console.log("Carregando sources.");
+                    var loaded = false;
+                    var geojson;
+                    //Fara um POST para pegar o GeoJSON no diretorio.
+                    $.ajax({
+                        url:"http://localhost/trabalho_slw/geojson.json",
+                        method:"POST",
+                        cache: false,
+                        async: false,
+                        success: function(data){
+                            console.log("Carregado!");
+                            geojson = data;
+                            loaded = true;
+                        },
+                        error: function(data, xhr, status, error){
+                            console.log("Deu ruim! :(");
+                            console.log(data);
+                            console.log(xhr);
+                            console.log(status);
+                            console.log(error);
+                            loaded = false;
+                        }
+                    });
+
+                    //Verifica se o GeoJSON foi carregado.
+                    if(loaded){
+                        //https://www.mapbox.com/mapbox-gl-js/api/#map#addlayer
+                        map.addSource("paradas",{
+                            "type": "geojson",
+                            "data": geojson  //"http://localhost/trabalho_slw/geojson.json"
+                        });
+
+                        //https://www.mapbox.com/maki-icons/
+
+                        //https://www.mapbox.com/mapbox-gl-js/style-spec/#layers
+                        map.addLayer({
+                            "id": "paradas_layer",
+                            "type": "symbol",
+                            "source": "paradas",
+                            "layout": {
+                                "icon-image": "triangle-15",
+                                "icon-allow-overlap": false,
+                                "visibility": "none"
+                            } 
+                        });
+
+                        //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
+                        document.getElementById('opcoes').addEventListener('change',function(e){
+                            if(e.target.checked){
+                                console.log("Marcado.");
+                            }
+                            else{
+                                console.log("Desmarcado.");
+                            }
+                            map.setLayoutProperty("paradas_layer",'visibility',
+                                e.target.checked ? 'visible' : 'none');
+                        });
+                    }
+                    else{
+                        console.log("Problema ao carregar GeoJSON! Verifique!");
+                    }
+                }
+                /*setTimeout(function(){
                     lnglat = map.getBounds();
                     console.log(lnglat);
                     var lng_sw = lnglat._sw.lng;
@@ -207,7 +306,7 @@
                         console.log(status);
                         console.log(error);
                     }
-                });},10000);
+                });},10000);*/
     
                 /*$.ajax({
                     url:"busca_onibus.php",
@@ -240,12 +339,35 @@
                         e.target.checked ? 'visible' : 'none');
                 });*/
             });
-            /*map.on('click',function(e){
-                //Preste atencao no nome da variavel
-                console.log(e.lngLat);
-            });*/
 
-            map.on('drag',function(){
+            //https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
+            map.on('click', 'paradas_layer', function (e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var description = "Nome da parada: " + e.features[0].properties.stop_name + 
+                                    "<br>" + e.features[0].properties.stop_desc;
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML(description)
+                    .addTo(map);
+            });
+            map.on('mouseenter', 'paradas_layer', function () {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves.
+            map.on('mouseleave', 'paradas_layer', function () {
+                map.getCanvas().style.cursor = '';
+            });
+            
+            /*map.on('drag',function(){
                 lnglat = map.getBounds();
                     console.log(lnglat);
                     var lng_sw = lnglat._sw.lng;
@@ -294,7 +416,7 @@
                 });
                 console.log("Plotei");
                 //aqui deve puxar os pontos existentes nas proximidades
-            });
+            });*/
         } 
     </script>
 </body>
