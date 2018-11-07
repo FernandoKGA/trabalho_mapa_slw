@@ -55,9 +55,29 @@ Referências:
 * [Option-files - MySQL Documentation](https://dev.mysql.com/doc/refman/5.7/en/option-files.html)
 * [How to auto-login in MySQL using Shell Scripts - StackOverflow](https://stackoverflow.com/questions/13814413/how-to-auto-login-mysql-in-shell-scripts)
 
+## Instalação do MySQL
+[MySQL Installer](https://dev.mysql.com/downloads/installer/)
+
 ## Instalação do Apache
 
+Um treco ai.
+
+## Instalação de certificado SSL no Apache
+
+* [Um](https://www.cloudinsidr.com/content/how-to-install-the-most-recent-version-of-openssl-on-windows-10-in-64-bit/)
+* [Dois](https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/)
+* [Três](https://www.sslshopper.com/article-how-to-create-and-install-an-apache-self-signed-certificate.html)
+* [Quatro](https://www.sslshopper.com/apache-server-ssl-installation-instructions.html)
+* [Cinco](https://letsencrypt.org/)
+* [Seis](https://community.letsencrypt.org/t/list-of-client-implementations/2103/21)
+
 ## Instalação do PHP
+
+Para a instalação do PHP no Windows, deve-se instalar a versão mais nova e estável do PHP, a 7.2.11, geralmente para x64 e **deve ser THREAD SAFE**. Após o donwload do PHP, deixe-o na pasta C:\ para acesso mais rápido à pasta do programa.
+
+[PHP 7.2.11 - VC15 x64 Thread Safe (2018-Oct-10 19:16:03)](https://windows.php.net/download#php-7.2)
+
+Após o donwload e a descompactação, substituia um treco ai...
 
 ## Instalação do Composer
 
