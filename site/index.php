@@ -28,24 +28,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height, user-scalable=yes">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
-    <script src='modernizr-custom.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
     <!-- Script para o jQuery --> 
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Script da API-->
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
+    <!--<script src='modernizr-custom.js'></script>-->
+    <!-- CSS da API -->
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
 </head>
 <body>
     <div class="cabeca">
-        Endereço:
-        <!-- Divisao para a caixa de pesquisa -->
-        <div class = "pesquisa">
-            <!-- Usa um form para se comunicar com o servidor -->
-            <form action="/busca_bd.php">
-                <input type= "text" placeholder = "Pesquise" disabled>
-                <input type="submit" value="OK" disabled>
-            </form>
-        </div>
         <!-- Os inputs para serem sequenciais devem estar -->
         <nav id="opcoes_um" class="opcoes_um">
             <input type="checkbox" id="onibus" value="onibus" disabled>
@@ -70,6 +62,9 @@
     <div id='map' style='width: 100%; height: 500px;'></div>
     <script>
 
+        var load_error;
+        
+        /*
         //Pega a posicao da pessoa
         function get_location(){
             if(Modernizr.geolocation){
@@ -77,6 +72,7 @@
             }
             else{
                 alert("Seu navegador não suporta Geolocalização.");
+
             }
         }
         var opcoes = {
@@ -85,7 +81,6 @@
             maximumAge: 0
         };
         get_location();
-        var load_error;
 
         function erro(error){
             switch(error.code){
@@ -105,14 +100,14 @@
         }
 
         function sucesso(pos){
+            //Pega as coordenadas assim que aceita a condição
+            var lat = pos.coords.latitude;  
+            var long = pos.coords.longitude;
+        }*/
             /*
                 Manter comentado para não gastar a API do Mapa que possui limite.
             */
 
-            //Pega as coordenadas assim que aceita a condição
-            var lat = pos.coords.latitude;  
-            var long = pos.coords.longitude;
-            
             mapboxgl.accessToken = 'pk.eyJ1IjoiZmVybmFuZG8ta2dhIiwiYSI6ImNqbTlpcnMxbDAwMGMzcG9nNmtldWlmYWQifQ.O4LmFPbru9U4X10QHhv1kQ';
         
             var geolocate = new mapboxgl.GeolocateControl({
@@ -133,16 +128,31 @@
                 unit: 'metric'
             });
 
+            //https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder-limit-region/
+            var geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                country: "br",
+                /*
+                    https://www.mapbox.com/help/define-bounding-box/
+                    First coordinate pair referring to the southwestern corner of the box
+                    and the second referring to the northeastern corner of the box.
+                */
+                bbox: [-47.453161643012265,-24.367569297823536,-45.86680880351264,-23.037950298414103]
+            });
+
             var map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/fernando-kga/cjmecq5bqea3l2rp07iyhzo90',
-                center: [long, lat],
-                zoom: 12.0
+                center: [-46.628,-23.552],
+                zoom: 15.0
             });
 
             var zoom;
             var lnglat;
             var userlocation;
+
+            //https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder/
+            map.addControl(geocoder);
 
             //https://github.com/mapbox/mapbox-gl-js/issues/5464
             map.addControl(geolocate);
@@ -343,7 +353,7 @@
             });
 
             //https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
-            map.on('click', 'paradas_layer', function (e) {
+            /*map.on('click', 'paradas_layer', function (e) {
                 var coordinates = e.features[0].geometry.coordinates.slice();
                 var description = "Nome da parada: " + e.features[0].properties.stop_name + 
                                     "<br>" + e.features[0].properties.stop_desc;
@@ -359,7 +369,7 @@
                     .setLngLat(coordinates)
                     .setHTML(description)
                     .addTo(map);
-            });
+            });*/
             map.on('mouseenter', 'paradas_layer', function () {
                 map.getCanvas().style.cursor = 'pointer';
             });
@@ -368,7 +378,24 @@
             map.on('mouseleave', 'paradas_layer', function () {
                 map.getCanvas().style.cursor = '';
             });
+
+            map.on('click', function(e){
+                console.log("Lat:"+e.lngLat.lat);
+                console.log("Lon:"+e.lngLat.lng);
+            })
+
+            map.on('zoom', function(){
+                console.log(map.getZoom());
+            })
             
+            /* 
+            Fórmulas para calcular zoom e tal.
+            https://math.stackexchange.com/questions/1836802/formula-to-map-any-given-point-on-circumference-of-circle-with-given-radius
+            https://www.mapbox.com/search-playground/#{%22url%22:%22%22,%22index%22:%22mapbox.places%22,%22staging%22:false,%22onCountry%22:true,%22onType%22:true,%22onProximity%22:true,%22onBBOX%22:true,%22onLimit%22:true,%22onLanguage%22:true,%22countries%22:[],%22proximity%22:%22%22,%22typeToggle%22:{%22country%22:false,%22region%22:false,%22district%22:false,%22postcode%22:false,%22locality%22:false,%22place%22:false,%22neighborhood%22:false,%22address%22:false,%22poi%22:false},%22types%22:[],%22bbox%22:%22%22,%22limit%22:%22%22,%22autocomplete%22:true,%22languages%22:[],%22languageStrict%22:false,%22onDebug%22:false,%22selectedLayer%22:%22%22,%22debugClick%22:{},%22query%22:%22-46.501984170297476,-23.4935040978838%22}
+            
+            */
+
+
             /*map.on('drag',function(){
                 lnglat = map.getBounds();
                     console.log(lnglat);
@@ -419,7 +446,6 @@
                 console.log("Plotei");
                 //aqui deve puxar os pontos existentes nas proximidades
             });*/
-        } 
     </script>
 </body>
 </html>
