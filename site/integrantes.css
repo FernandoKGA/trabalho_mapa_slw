@@ -1,0 +1,77 @@
+.button {
+background-color: #4CAF50; /* Green */
+border: none;
+color: white;
+padding: 16px 32px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-size: 16px;
+margin: 4px 2px;
+-webkit-transition-duration: 0.4s; /* Safari */
+transition-duration: 0.4s;
+cursor: pointer;
+}
+
+.button2 {
+background-color: white; 
+color: #008CBA; 
+border: 2px solid #008CBA;
+width: 200px;
+border-radius: 10px 20px 30px 40px;
+}
+
+.button2:hover {
+background-color: #008CBA;
+color: white;
+}
+
+.circle {
+background-color: #aaa;
+border-radius: 50%;
+width: 180px;
+height: 180px;
+overflow: hidden;
+position: relative;
+float: left;
+}
+
+.circle img {
+position: absolute;
+bottom: 0;
+width: 100%;
+height: 100%;
+}
+
+.overlay {
+position: absolute;
+top: 0;
+bottom: 0;
+left: 0;
+right: 0;
+height: 100%;
+width: 100%;
+opacity: 0;
+transition: .5s ease;
+background-color: #008CBA;
+}
+
+.circle:hover .overlay {
+opacity: 1;
+}
+
+.text {
+color: white;
+font-size: 20px;
+position: absolute;
+top: 50%;
+left: 50%;
+-webkit-transform: translate(-50%, -50%);
+-ms-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+text-align: center;
+}
+
+#fotos{
+  display: none;
+}
