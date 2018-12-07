@@ -172,9 +172,9 @@
                     http.send();
                     return http.status!=404;
             }
-            if(!UrlExists("http://localhost/trabalho_slw/geojson.json")){
+            if(!UrlExists("http://localhost/trabalho_slw/geojson_paradas.json")){
                 $.ajax({
-                    url:"cria_geojson.php",
+                    url:"cria_geojson_paradas.php",
                     method:"GET",
                     cache: false,
                     async: false,
@@ -206,18 +206,17 @@
 
             //Fazer funcoes assim que o mapa estiver carregando.
             map.on('load', function(){
-                geolocate.trigger();
-                zoom = map.getZoom();
-                console.log(zoom);
+
+                //Vai carregar o GeoJSON
                 if(load_error){
                     console.log("Carregando sources.");
                     var loaded = false;
                     var geojson;
                     //Fara um POST para pegar o GeoJSON no diretorio.
                     $.ajax({
-                        url:"http://localhost/trabalho_slw/geojson.json",
+                        url:"http://localhost/trabalho_slw/geojson_paradas.json",
                         method:"POST",
-                        cache: false,
+                        cache: true,
                         async: false,
                         success: function(data){
                             console.log("Carregado!");
@@ -236,7 +235,7 @@
 
                     //Verifica se o GeoJSON foi carregado.
                     if(loaded){
-                        //https://www.mapbox.com/mapbox-gl-js/api/#map#addlayer
+                        //https://www.mapbox.com/mapbox-gl-js/api/#map#addsource
                         map.addSource("paradas",{
                             "type": "geojson",
                             "data": geojson  //"http://localhost/trabalho_slw/geojson.json"
@@ -244,6 +243,7 @@
 
                         //https://www.mapbox.com/maki-icons/
 
+                        //https://www.mapbox.com/mapbox-gl-js/api/#map#addlayer
                         //https://www.mapbox.com/mapbox-gl-js/style-spec/#layers
                         map.addLayer({
                             "id": "paradas_layer",
@@ -272,6 +272,80 @@
                         console.log("Problema ao carregar GeoJSON! Verifique!");
                     }
                 }
+
+                var loaded_onibus;
+
+                //Tentar carregar os ônibus
+                console.log("Carregando sources dos ônibus.");
+                    //Fara um GET para pegar os ônbius em movimento.
+                $.ajax({
+                    url:"http://localhost/trabalho_slw/busca_onibus.php",
+                    method:"POST",
+                    cache: false,
+                    async: false,
+                    /*data:{
+                        'lng_centro': lng_centro,
+                        'lat_centro': lat_centro,
+                        'raio': raio
+                    }*/
+                    success: function(data){
+                        console.log("Carregado!");
+                        onibus_em_mov = data;
+                        loaded_onibus = true;
+                    },
+                    error: function(data, xhr, status, error){
+                        console.log("Deu ruim! :(");
+                        console.log(data);
+                        console.log(xhr);
+                        console.log(status);
+                        console.log(error);
+                        loaded_onibus = false;
+                    }
+                });
+
+                //Verifica se os onibus foram carregados.
+                if(loaded_onibus){
+                    //https://www.mapbox.com/mapbox-gl-js/api/#map#addsource
+                    //https://www.mapbox.com/mapbox-gl-js/style-spec/#sources
+                    map.addSource("onibus",{
+                        "type": "geojson",
+                        "data": onibus_em_mov  //"http://localhost/trabalho_slw/busca_onibus.php"
+                    });
+
+                    //https://www.mapbox.com/maki-icons/
+
+                    //https://www.mapbox.com/mapbox-gl-js/api/#map#addlayer
+                    //https://www.mapbox.com/mapbox-gl-js/style-spec/#layers
+                    map.addLayer({
+                        "id": "onibus_layer",
+                        "type": "symbol",
+                        "source": "onibus",
+                        "layout": {
+                            "icon-image": "bus-15",
+                            "icon-allow-overlap": false,
+                            "visibility": "none"
+                        }
+                    });
+
+                    //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
+                    document.getElementById('opcoes_dois').addEventListener('change',function(e){
+                        if(e.target.checked){
+                            console.log("Marcado.");
+                        }
+                        else{
+                            console.log("Desmarcado.");
+                        }
+                        map.setLayoutProperty("paradas_layer",'visibility',
+                            e.target.checked ? 'visible' : 'none');
+                    });
+                }
+                else{
+                    console.log("Problema ao carregar os ônibus! Verifique!");
+                }
+                geolocate.trigger();
+                zoom = map.getZoom();
+                console.log(zoom);
+
                 /*setTimeout(function(){
                     lnglat = map.getBounds();
                     console.log(lnglat);
@@ -334,22 +408,7 @@
                             
                     }
                 });*/
-                /*
-                map.addSource('pontos', {type: 'geojson'});
-                map.addLayer({
-                    "id": "pontos",
-                    "type": "marker",
-                    "source": "places",
-                    "layout": {
-                        "icon-imagem": "marker" + "-15",
-                        "icon-allow-overlap": false
-                    },
-                    "filter": ["==", "icon", "marker"]
-                });
-                document.getElementById('option2').addEventListener('change',function(e){
-                    map.setLayoutProperty("pontos",'visibility',
-                        e.target.checked ? 'visible' : 'none');
-                });*/
+                
             });
 
             //https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
@@ -379,15 +438,19 @@
                 map.getCanvas().style.cursor = '';
             });
 
-            map.on('click', function(e){
+            /*map.on('click', function(e){
                 console.log("Lat:"+e.lngLat.lat);
                 console.log("Lon:"+e.lngLat.lng);
-            })
+            });*/
 
             map.on('zoom', function(){
                 console.log(map.getZoom());
-            })
+            });
             
+            /**
+            //Função que irá mandar uma requisição de atualização para o arquivo GeoJSON dos ônibus
+            setInterval(function(),2MIN); 
+            */
             /* 
             Fórmulas para calcular zoom e tal.
             https://math.stackexchange.com/questions/1836802/formula-to-map-any-given-point-on-circumference-of-circle-with-given-radius
@@ -444,7 +507,6 @@
                     }
                 });
                 console.log("Plotei");
-                //aqui deve puxar os pontos existentes nas proximidades
             });*/
     </script>
 </body>

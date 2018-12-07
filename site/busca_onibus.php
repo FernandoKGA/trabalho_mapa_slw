@@ -2,6 +2,9 @@
 /**
  * Como fazer quando ele buscar? Mostra os pontos? Fixa no primeiro onibus que achar? Para onde ele vai?
  */
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if(isset($_POST)){
     session_start();
     require "../../vendor/autoload.php";
@@ -20,8 +23,10 @@ if(isset($_POST)){
             'Cookie' => $cookie
            ]
         ]);
-    echo $res->getBody();
-
+    
+    $onibus = $res->getBody();
+    $onibus_decode = json_decode($onibus,true);
+    
     //Formulas https://secure.php.net/manual/pt_BR/ref.math.php
 
     //Passagem pela formula de tratamento e filtragem
@@ -33,9 +38,11 @@ if(isset($_POST)){
      */
 
     //Verificar qual o px e o py.
-    $lng_centro = $_POST['lng_centro'];
+    /*$lng_centro = $_POST['lng_centro'];
     $lat_centro = $_POST['lat_centro'];
-    $raio = $_POST['raio'];
+    $raio = $_POST['raio'];*/
+
+    /*
     function filtro($px,$py){
         //F(x,y) = (x-h)^2 + (y-k)^2 - r^2 = 0
         //r^2
@@ -45,11 +52,67 @@ if(isset($_POST)){
         $part_um = ($px-$lng_centro);
         $part_um_quad = pow($part_um,2);
 
-        $part_dois = ()
-    }
-    while(1==1){
+        //(y-k)^2
+        $part_dois = ($py-$lat_centro);
+        $part_dois_quad = pow($part_dois,2);
 
+        $resultado = $part_um + $part_dois - $raio_quad;
+        return $resultado;
     }
+    */
+    function utf8ize($d) {
+        if (is_array($d)) {
+            foreach ($d as $k => $v) {
+                $d[$k] = utf8ize($v);
+            }
+        } else if (is_string ($d)) {
+            return utf8_encode($d);
+        }
+        return $d;
+    }
+
+    $features = array();
+    foreach($onibus_decode as $key => $value){
+        
+        print $key;
+
+        $features[] = array(
+            "type" => "Feature",
+            "geometry" => array(
+                "type" => "Point",
+                "coordinates" => array(
+                    $value["px"],
+                    $value["py"],
+                ),
+            ),
+            'properties' => array(
+                'c' => $value['c'],
+                'lt0' => $value['lt0'],
+                'lt1' => $value['lt1'],
+                'p' => $value['p']
+            ),
+        );
+    }
+    $new_data = array(
+        "type" => "FeatureCollection",
+        "features" => $features
+    );
+
+    //print_r($onibus_decode);
+    print_r($new_data);
+    /*
+    if($res) {
+        while ($row = mysqli_fetch_assoc($result))
+        {
+          $data[] = utf8ize($row);
+        }
+    }
+    
+    $json_data = json_encode($data);
+    $original_data = json_decode($json_data, true);
+    
+    $final_data = json_encode($new_data, JSON_PRETTY_PRINT);
+    */
     session_write_close();
 }
 

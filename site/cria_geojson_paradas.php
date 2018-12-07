@@ -51,7 +51,7 @@
         $final_data = json_encode($new_data, JSON_PRETTY_PRINT);
 
         //Criara um arquivo json com os dados criados.
-        $file = fopen("geojson.json", "w+");
+        $file = fopen("geojson_paradas.json", "w+");
         touch($file);
         fwrite($file,$final_data);
         fclose($file);
