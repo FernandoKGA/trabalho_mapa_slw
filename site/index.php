@@ -39,14 +39,15 @@
 <body>
     <div class="cabeca">
         <!-- Os inputs para serem sequenciais devem estar -->
-        <nav id="opcoes_um" class="opcoes_um">
+        <!--<nav id="opcoes_um" class="opcoes_um">
             <input type="checkbox" id="onibus" value="onibus" disabled>
             <label for="onibus">Ônibus em movimento</label>
         </nav>
         <nav id="opcoes_dois" class="opcoes_dois">
             <input type="checkbox" name="paradas" value="paradas">
             <label for="paradas">Paradas de ônibus</label>
-        </nav>
+        </nav>-->
+        <nav id='filter-group' class='filter-group'></nav>
         <div class="grupo">
             <ul style="list-style-type:none;">
                 <li>Fernando Karchiloff Gouveia de Amorim</li>
@@ -204,6 +205,9 @@
             // disable map rotation using touch rotation gesture
             map.touchZoomRotate.disableRotation();
 
+            //Pega o grupo de filtros
+            var filterGroup = document.getElementById('filter-group');
+
             //Fazer funcoes assim que o mapa estiver carregando.
             map.on('load', function(){
 
@@ -255,18 +259,64 @@
                                 "visibility": "none"
                             }
                         });
+                        /*
+                        places.features.forEach(function(feature) {
+                            var symbol = feature.properties['icon'];
+                            var layerID = 'poi-' + symbol;
 
-                        //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
-                        document.getElementById('opcoes_dois').addEventListener('change',function(e){
-                            if(e.target.checked){
-                                console.log("Marcado.");
+                            // Add a layer for this symbol type if it hasn't been added already.
+                            if (!map.getLayer(layerID)) {
+                                map.addLayer({
+                                    "id": layerID,
+                                    "type": "symbol",
+                                    "source": "places",
+                                    "layout": {
+                                        "icon-image": symbol + "-15",
+                                        "icon-allow-overlap": true
+                                    },
+                                    "filter": ["==", "icon", symbol]
+                                });
+
+                                // Add checkbox and label elements for the layer.
+                                var input = document.createElement('input');
+                                input.type = 'checkbox';
+                                input.id = layerID;
+                                input.checked = true;
+                                filterGroup.appendChild(input);
+
+                                var label = document.createElement('label');
+                                label.setAttribute('for', layerID);
+                                label.textContent = symbol;
+                                filterGroup.appendChild(label);
+
+                                // When the checkbox changes, update the visibility of the layer.
+                                input.addEventListener('change', function(e) {
+                                    map.setLayoutProperty(layerID, 'visibility',
+                                        e.target.checked ? 'visible' : 'none');
+                                });
                             }
-                            else{
-                                console.log("Desmarcado.");
-                            }
-                            map.setLayoutProperty("paradas_layer",'visibility',
-                                e.target.checked ? 'visible' : 'none');
-                        });
+                        });*/
+                        if(map.getLayer('paradas_layer')){
+                            var input = document.createElement('input');
+                            input.type = 'checkbox';
+                            input.id = 'paradas_layer';
+                            input.checked = false;
+                            filterGroup.appendChild(input);
+
+                            var label = document.createElement('label');
+                            label.setAttribute('for', 'paradas_layer');
+                            label.textContent = 'Paradas de ônibus';
+                            filterGroup.appendChild(label);
+
+                            //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
+                            input.addEventListener('change', function(e) {
+                                    map.setLayoutProperty('paradas_layer', 'visibility',
+                                        e.target.checked ? 'visible' : 'none');
+                            });
+                        }
+                        else{
+                            console.log("Problemas em pegar layer de paradas!");
+                        }
                     }
                     else{
                         console.log("Problema ao carregar GeoJSON! Verifique!");
@@ -302,7 +352,7 @@
                         loaded_onibus = false;
                     }
                 });
-
+                /*
                 //Verifica se os onibus foram carregados.
                 if(loaded_onibus){
                     //https://www.mapbox.com/mapbox-gl-js/api/#map#addsource
@@ -328,20 +378,30 @@
                     });
 
                     //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
-                    document.getElementById('opcoes_dois').addEventListener('change',function(e){
-                        if(e.target.checked){
-                            console.log("Marcado.");
-                        }
-                        else{
-                            console.log("Desmarcado.");
-                        }
-                        map.setLayoutProperty("paradas_layer",'visibility',
-                            e.target.checked ? 'visible' : 'none');
-                    });
+                    if(map.getLayer('paradas_layer')){
+                        var input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.id = 'paradas_layer';
+                        input.checked = false;
+                        filterGroup.appendChild(input);
+
+                        var label = document.createElement('label');
+                        label.setAttribute('for', 'paradas_layer');
+                        label.textContent = 'Paradas de ônibus';
+                        filterGroup.appendChild(label);
+
+                        input.addEventListener('change', function(e) {
+                                map.setLayoutProperty('paradas_layer', 'visibility',
+                                    e.target.checked ? 'visible' : 'none');
+                        });
+                    }
+                    else{
+                        console.log("Problemas em pegar layer de paradas!");
+                    }                    
                 }
                 else{
                     console.log("Problema ao carregar os ônibus! Verifique!");
-                }
+                }*/
                 geolocate.trigger();
                 zoom = map.getZoom();
                 console.log(zoom);
