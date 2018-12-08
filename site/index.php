@@ -49,7 +49,6 @@
             <input type="checkbox" name="paradas" value="paradas">
             <label for="paradas">Paradas de ônibus</label>
         </nav>-->
-        <nav id='filter-group' class='filter-group'></nav>
         
         <div class="integrantes">
 		
@@ -83,7 +82,9 @@
     <!-- Plugin do Mapbox para geocoder -->
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
-    <div id='map' style='width: 100%; height: 500px;'></div>
+    <div id='map' style='width: 100%; height: 500px;'>
+        <nav id='filter-group' class='filter-group'></nav>
+    </div>
     <script>
 
         function exibeIntegrantes(){
