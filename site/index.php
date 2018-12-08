@@ -55,7 +55,13 @@
     		<button id="btn" onclick="exibeIntegrantes()" class="button button2">Integrantes</button>
 		
 			<div id="fotos">
-		
+
+				<div class="circle">
+					<img src="img\fernanda.jpg">
+					<div class="overlay">
+						<div class="text">Fernanda Pereira Inácio</div>
+					</div>
+				</div>
 				<div class="circle">
 					<img src="img\fernando.jpg">
 					<div class="overlay">
@@ -74,6 +80,13 @@
 						<div class="text">Lucas Vieira Ferreira</div>
 					</div>			
 				</div>
+				<div class="circle">
+					<img src="img\mara.jpg">
+					<div class="overlay">
+						<div class="text">Mara Tamiris Miranda de Oliveira</div>
+					</div>			
+				</div>
+
 			</div>
 			
 		</div>
@@ -335,6 +348,17 @@
                             var label = document.createElement('label');
                             label.setAttribute('for', 'paradas_layer');
                             label.textContent = 'Paradas de ônibus';
+                            filterGroup.appendChild(label);
+
+                            var input = document.createElement('input');
+                            input.type = 'checkbox';
+                            input.id = 'nsei_layer';
+                            input.checked = false;
+                            filterGroup.appendChild(input);
+
+                            var label = document.createElement('label');
+                            label.setAttribute('for', 'nsei_layer');
+                            label.textContent = 'Seila o que';
                             filterGroup.appendChild(label);
 
                             //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
