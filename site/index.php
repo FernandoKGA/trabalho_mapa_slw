@@ -87,6 +87,9 @@
 					</div>			
 				</div>
 
+                <button id="btnOculta" onclick="ocultarIntegrantes()" class="button btnOcultar">Integrantes</button>
+
+
 			</div>
 			
 		</div>
@@ -103,6 +106,11 @@
         function exibeIntegrantes(){
             document.getElementById('btn').style.display = "none";
             document.getElementById('fotos').style.display = "inherit";
+        }
+
+        function ocultarIntegrantes(){
+            document.getElementById('fotos').style.display = "none";
+            document.getElementById('btn').style.display = "inherit";
         }
 
         var load_error;
