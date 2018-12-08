@@ -507,11 +507,6 @@
                 console.log("Lon:"+e.lngLat.lng);
             });*/
 
-            map.on('zoom', function(){
-                console.log(map.getZoom());
-            });
-            
-            
             //Função que irá mandar uma requisição de atualização para o arquivo GeoJSON dos ônibus a cada 1,5 min
             setInterval(function(){
                 console.log("Recarregando ônibus!");
