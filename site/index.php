@@ -358,11 +358,11 @@
                             label.textContent = 'Paradas de ônibus';
                             filterGroup.appendChild(label);
 
-                            var input = document.createElement('input');
-                            input.type = 'checkbox';
-                            input.id = 'nsei_layer';
-                            input.checked = false;
-                            filterGroup.appendChild(input);
+                            var input2 = document.createElement('input');
+                            input2.type = 'checkbox';
+                            input2.id = 'nsei_layer';
+                            input2.checked = false;
+                            filterGroup.appendChild(input2);
 
                             var label = document.createElement('label');
                             label.setAttribute('for', 'nsei_layer');
