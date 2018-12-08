@@ -28,6 +28,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height, user-scalable=yes">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="integrantes.css" />
+
     <!-- Script para o jQuery --> 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Script da API-->
@@ -48,20 +50,46 @@
             <label for="paradas">Paradas de ônibus</label>
         </nav>-->
         <nav id='filter-group' class='filter-group'></nav>
-        <div class="grupo">
-            <ul style="list-style-type:none;">
-                <li>Fernando Karchiloff Gouveia de Amorim</li>
-                <li>Fernanda Inácio</li>
-                <li>Mara Tamiris</li>
-                <li>Lucas Ken</li>
-            </ul>
-        </div>
+        
+        <div class="integrantes">
+		
+    		<button id="btn" onclick="exibeIntegrantes()" class="button button2">Integrantes</button>
+		
+			<div id="fotos">
+		
+				<div class="circle">
+					<img src="img\fernando.jpg">
+					<div class="overlay">
+						<div class="text">Fernando Karchiloff Gouveia de Amorim</div>
+					</div>
+				</div>
+				<div class="circle">
+					<img src="img\ken.jpg">
+					<div class="overlay">
+						<div class="text">Lucas Ken</div>
+					</div>
+				</div>
+				<div class="circle">
+					<img src="img\vieira.jpg">
+					<div class="overlay">
+						<div class="text">Lucas Vieira Ferreira</div>
+					</div>			
+				</div>
+			</div>
+			
+		</div>
+
     </div>
     <!-- Plugin do Mapbox para geocoder -->
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
     <div id='map' style='width: 100%; height: 500px;'></div>
     <script>
+
+        function exibeIntegrantes(){
+            document.getElementById('btn').style.display = "none";
+            document.getElementById('fotos').style.display = "inherit";
+        }
 
         var load_error;
         
