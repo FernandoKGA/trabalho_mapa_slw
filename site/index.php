@@ -34,7 +34,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Script da API-->
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
-    <!--<script src='modernizr-custom.js'></script>-->
     <!-- CSS da API -->
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
 </head>
@@ -358,17 +357,6 @@
                             label.textContent = 'Paradas de ônibus';
                             filterGroup.appendChild(label);
 
-                            var input2 = document.createElement('input');
-                            input2.type = 'checkbox';
-                            input2.id = 'nsei_layer';
-                            input2.checked = false;
-                            filterGroup.appendChild(input2);
-
-                            var label = document.createElement('label');
-                            label.setAttribute('for', 'nsei_layer');
-                            label.textContent = 'Seila o que';
-                            filterGroup.appendChild(label);
-
                             //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
                             input.addEventListener('change', function(e) {
                                     map.setLayoutProperty('paradas_layer', 'visibility',
@@ -391,7 +379,7 @@
                     //Fara um GET para pegar os ônbius em movimento.
                 $.ajax({
                     url:"http://localhost/trabalho_slw/busca_onibus.php",
-                    method:"POST",
+                    method:"GET",
                     cache: false,
                     async: false,
                     /*data:{
@@ -400,9 +388,9 @@
                         'raio': raio
                     }*/
                     success: function(data){
-                        console.log("Carregado!");
-                        onibus_em_mov = data;
+                        onibus_em_mov = JSON.parse(data);
                         loaded_onibus = true;
+                        console.log("Carregado!");
                     },
                     error: function(data, xhr, status, error){
                         console.log("Deu ruim! :(");
@@ -413,9 +401,10 @@
                         loaded_onibus = false;
                     }
                 });
-                /*
+                
                 //Verifica se os onibus foram carregados.
                 if(loaded_onibus){
+
                     //https://www.mapbox.com/mapbox-gl-js/api/#map#addsource
                     //https://www.mapbox.com/mapbox-gl-js/style-spec/#sources
                     map.addSource("onibus",{
@@ -439,20 +428,20 @@
                     });
 
                     //https://www.mapbox.com/mapbox-gl-js/example/toggle-interaction-handlers/
-                    if(map.getLayer('paradas_layer')){
+                    if(map.getLayer('onibus_layer')){
                         var input = document.createElement('input');
                         input.type = 'checkbox';
-                        input.id = 'paradas_layer';
+                        input.id = 'onibus_layer';
                         input.checked = false;
                         filterGroup.appendChild(input);
 
                         var label = document.createElement('label');
-                        label.setAttribute('for', 'paradas_layer');
-                        label.textContent = 'Paradas de ônibus';
+                        label.setAttribute('for', 'onibus_layer');
+                        label.textContent = 'Ônibus em movimento';
                         filterGroup.appendChild(label);
 
                         input.addEventListener('change', function(e) {
-                                map.setLayoutProperty('paradas_layer', 'visibility',
+                                map.setLayoutProperty('onibus_layer', 'visibility',
                                     e.target.checked ? 'visible' : 'none');
                         });
                     }
@@ -462,78 +451,12 @@
                 }
                 else{
                     console.log("Problema ao carregar os ônibus! Verifique!");
-                }*/
+                }
                 geolocate.trigger();
-                zoom = map.getZoom();
-                console.log(zoom);
-
-                /*setTimeout(function(){
-                    lnglat = map.getBounds();
-                    console.log(lnglat);
-                    var lng_sw = lnglat._sw.lng;
-                    var lng_ne = lnglat._ne.lng;
-                    var lat_sw = lnglat._sw.lat;
-                    var lat_ne = lnglat._ne.lat;
-                    console.log(lng_sw);
-                    console.log(lng_ne);
-                    console.log(lat_sw);
-                    console.log(lat_ne);
-                    $.ajax({
-                    url:"busca_bd.php",
-                    method:"POST",
-                    data:{
-                        'lng_sw': lng_sw,
-                        'lat_sw': lat_sw,
-                        'lng_ne': lng_ne,
-                        'lat_ne': lat_ne
-                    },
-                    //dataType é o tipo de arquivo que estamos mandando
-                    //dataType:"JSON",
-                    cache: false,
-                    //contentType: 'application/json; charset=utf-8',
-                    success: function(data){
-                        //Faz o parse do JSON.
-                        var data_json = JSON.parse(data);
-                        console.log(data_json);
-                        var i = 0;
-                        //https://stackoverflow.com/questions/33995648/cannot-use-in-operator-to-search-for-length?rq=1
-                        $.each(data_json, function(){
-                            console.log(data_json[i].stop_lon);
-                            console.log(data_json[i].stop_lat);
-                            var marker = new mapboxgl.Marker()
-                                .setLngLat([data_json[i].stop_lon,data_json[i].stop_lat])
-                                .addTo(map);
-                            i++;
-                        });
-                    },
-                    error: function(data, xhr, status, error){
-                        console.log("Deu ruim");
-                        console.log(data);
-                        console.log(xhr);
-                        console.log(status);
-                        console.log(error);
-                    }
-                });},10000);*/
-    
-                /*$.ajax({
-                    url:"busca_onibus.php",
-                    method:"POST",
-                    dataType:"JSON",
-                    cache: false,
-                    success:function(data){
-                        console.log(data);
-                        
-                        var marker = new mapboxgl.Marker()
-                            .setLngLat([data.vs[0].px,data.vs[0].py])
-                            .addTo(map);
-                            
-                    }
-                });*/
-                
             });
 
             //https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
-            /*map.on('click', 'paradas_layer', function (e) {
+            map.on('click', 'paradas_layer', function (e) {
                 var coordinates = e.features[0].geometry.coordinates.slice();
                 var description = "Nome da parada: " + e.features[0].properties.stop_name + 
                                     "<br>" + e.features[0].properties.stop_desc;
@@ -549,7 +472,27 @@
                     .setLngLat(coordinates)
                     .setHTML(description)
                     .addTo(map);
-            });*/
+            });
+
+            map.on('click', 'onibus_layer', function (e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var description = "Número da linha: " + e.features[0].properties.c + "<br>" + 
+                                    "Destino: " + e.features[0].properties.lt0 + "<br>" +
+                                    "Origem: " + e.features[0].properties.lt1 + "<br>";
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML(description)
+                    .addTo(map);
+            });
+
             map.on('mouseenter', 'paradas_layer', function () {
                 map.getCanvas().style.cursor = 'pointer';
             });
@@ -568,67 +511,41 @@
                 console.log(map.getZoom());
             });
             
-            /**
-            //Função que irá mandar uma requisição de atualização para o arquivo GeoJSON dos ônibus
-            setInterval(function(),2MIN); 
-            */
-            /* 
-            Fórmulas para calcular zoom e tal.
-            https://math.stackexchange.com/questions/1836802/formula-to-map-any-given-point-on-circumference-of-circle-with-given-radius
-            https://www.mapbox.com/search-playground/#{%22url%22:%22%22,%22index%22:%22mapbox.places%22,%22staging%22:false,%22onCountry%22:true,%22onType%22:true,%22onProximity%22:true,%22onBBOX%22:true,%22onLimit%22:true,%22onLanguage%22:true,%22countries%22:[],%22proximity%22:%22%22,%22typeToggle%22:{%22country%22:false,%22region%22:false,%22district%22:false,%22postcode%22:false,%22locality%22:false,%22place%22:false,%22neighborhood%22:false,%22address%22:false,%22poi%22:false},%22types%22:[],%22bbox%22:%22%22,%22limit%22:%22%22,%22autocomplete%22:true,%22languages%22:[],%22languageStrict%22:false,%22onDebug%22:false,%22selectedLayer%22:%22%22,%22debugClick%22:{},%22query%22:%22-46.501984170297476,-23.4935040978838%22}
             
-            */
-
-
-            /*map.on('drag',function(){
-                lnglat = map.getBounds();
-                    console.log(lnglat);
-                    var lng_sw = lnglat._sw.lng;
-                    var lng_ne = lnglat._ne.lng;
-                    var lat_sw = lnglat._sw.lat;
-                    var lat_ne = lnglat._ne.lat;
-                    console.log(lng_sw);
-                    console.log(lng_ne);
-                    console.log(lat_sw);
-                    console.log(lat_ne);
-                    $.ajax({
-                    url:"busca_bd.php",
-                    method:"POST",
-                    data:{
-                        'lng_sw': lng_sw,
-                        'lat_sw': lat_sw,
-                        'lng_ne': lng_ne,
-                        'lat_ne': lat_ne
-                    },
-                    //dataType é o tipo de arquivo que estamos mandando
-                    //dataType:"JSON",
+            //Função que irá mandar uma requisição de atualização para o arquivo GeoJSON dos ônibus a cada 1,5 min
+            setInterval(function(){
+                console.log("Recarregando ônibus!");
+                $.ajax({
+                    url:"http://localhost/trabalho_slw/busca_onibus.php",
+                    method:"GET",
                     cache: false,
-                    //contentType: 'application/json; charset=utf-8',
+                    async: false,
                     success: function(data){
-                        //Faz o parse do JSON.
-                        var data_json = JSON.parse(data);
-                        console.log(data_json);
-                        var i = 0;
-                        //https://stackoverflow.com/questions/33995648/cannot-use-in-operator-to-search-for-length?rq=1
-                        $.each(data_json, function(){
-                            console.log(data_json[i].stop_lon);
-                            console.log(data_json[i].stop_lat);
-                            var marker = new mapboxgl.Marker()
-                                .setLngLat([data_json[i].stop_lon,data_json[i].stop_lat])
-                                .addTo(map);
-                            i++;
-                        });
+                        onibus_em_mov = JSON.parse(data);
+                        loaded_onibus = true;
+                        console.log("Carregado!");
                     },
                     error: function(data, xhr, status, error){
-                        console.log("Deu ruim");
+                        console.log("Deu ruim! :(");
                         console.log(data);
                         console.log(xhr);
                         console.log(status);
                         console.log(error);
+                        loaded_onibus = false;
                     }
                 });
-                console.log("Plotei");
-            });*/
+                if(loaded_onibus){
+                    map.getSource('onibus').setData(onibus_em_mov);
+                }
+            }, 60000); 
+            
+            /*
+
+            Fórmulas para calcular zoom e tal.
+            https://math.stackexchange.com/questions/1836802/formula-to-map-any-given-point-on-circumference-of-circle-with-given-radius
+            https://www.mapbox.com/search-playground/#{%22url%22:%22%22,%22index%22:%22mapbox.places%22,%22staging%22:false,%22onCountry%22:true,%22onType%22:true,%22onProximity%22:true,%22onBBOX%22:true,%22onLimit%22:true,%22onLanguage%22:true,%22countries%22:[],%22proximity%22:%22%22,%22typeToggle%22:{%22country%22:false,%22region%22:false,%22district%22:false,%22postcode%22:false,%22locality%22:false,%22place%22:false,%22neighborhood%22:false,%22address%22:false,%22poi%22:false},%22types%22:[],%22bbox%22:%22%22,%22limit%22:%22%22,%22autocomplete%22:true,%22languages%22:[],%22languageStrict%22:false,%22onDebug%22:false,%22selectedLayer%22:%22%22,%22debugClick%22:{},%22query%22:%22-46.501984170297476,-23.4935040978838%22}
+
+            */
     </script>
 </body>
 </html>

@@ -25,7 +25,7 @@ if(isset($_POST)){
         ]);
     
     $onibus = $res->getBody();
-    $onibus_decode = json_decode($onibus,true);
+    $onibus_decodificado = json_decode($onibus,true);
     
     //Formulas https://secure.php.net/manual/pt_BR/ref.math.php
 
@@ -72,34 +72,57 @@ if(isset($_POST)){
     }
 
     $features = array();
-    foreach($onibus_decode as $key => $value){
-        
-        print $key;
+    $list = $onibus_decodificado['l'];    //Pega as listas de ônibus
 
-        $features[] = array(
-            "type" => "Feature",
-            "geometry" => array(
-                "type" => "Point",
-                "coordinates" => array(
-                    $value["px"],
-                    $value["py"],
+    foreach($list as $key => $value){
+        
+        //echo "<p>c: {$value['c']}, sl: {$value['sl']}, lt0: {$value['lt0']}, lt1: {$value['lt1']}</p>";
+        
+        $c = $value['c'];
+        $sl = $value['sl'];
+        $lt0 = $value['lt0'];
+        $lt1 = $value['lt1'];
+        
+        /*print $value['sl'];
+        print $value['lt0'];
+        print $value['lt1'];*/
+        //print $value['vs']['p'];   //Acessa dentro de 'vs'
+
+        foreach($value['vs'] as $key_linha => $value_linha){
+            
+            //echo "<p>p: {$value_linha['p']}, lat(py): {$value_linha['py']}, lon(px): {$value_linha['px']}</p>";
+            
+            $features[] = array(
+                "type" => "Feature",
+                "geometry" => array(
+                    "type" => "Point",
+                    "coordinates" => array(
+                        $value_linha["px"],
+                        $value_linha["py"],
+                    ),
                 ),
-            ),
-            'properties' => array(
-                'c' => $value['c'],
-                'lt0' => $value['lt0'],
-                'lt1' => $value['lt1'],
-                'p' => $value['p']
-            ),
-        );
+                'properties' => array(
+                    'c' => $c,
+                    'sl' => $sl,
+                    'lt0' => $lt0,
+                    'lt1' => $lt1,
+                    'p' => $value_linha['p']
+                ),
+            );
+        }
+        
     }
     $new_data = array(
         "type" => "FeatureCollection",
         "features" => $features
     );
-
+    
+    $onibus_codificado_json = json_encode($new_data, JSON_PRETTY_PRINT);
+    echo $onibus_codificado_json;
     //print_r($onibus_decode);
-    print_r($new_data);
+    //print_r($new_data);
+
+
     /*
     if($res) {
         while ($row = mysqli_fetch_assoc($result))
